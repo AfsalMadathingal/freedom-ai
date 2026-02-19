@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Zilla+Slab:wght@700&display=swap');
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import "https://www.nerdfonts.com/assets/css/webfont.css";
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #21201C;
+  /* Match the dark bg */
+}
+
+.font-serif-logo {
+  font-family: 'Zilla Slab', serif;
+}
+
+/* Markdown prose styling */
+.prose {
+  color: #E5E5E2;
+  max-width: none;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: #E5E5E2;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose p {
+  line-height: 1.6;
+  margin-bottom: 1em;
+}
+
+.prose pre {
+  background-color: #1a1a1a !important;
+  border-radius: 0.75rem;
+  border: 1px solid #2F2F2B;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.prose code {
+  color: #E5E5E2 !important;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+}
+
+/* Markdown Tables - Added manually to ensure style consistency */
+.prose table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+  font-size: 0.9em;
+  border: 1px solid #3A3933;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.prose thead {
+  background-color: #2C2B28;
+}
+
+.prose th {
+  color: #E5E5E2;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #3A3933;
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #3A3933;
+  color: #E5E5E2;
+}
+
+.prose tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tr:hover {
+  background-color: #2C2B28;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #393937;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52514B;
+}
+
+/* Claude Loading Spinner */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.claude-spinner {
+  color: #D97757;
+  /* Orange tint */
+  font-size: 1.5rem;
+  animation: spin-slow 4s linear infinite;
+  display: inline-block;
+}
+
+/* Syntax Highlighting Override */
+.hljs {
+  background: transparent !important;
+  color: inherit !important;
+  /* Let highlight.js colors work, but let base text be whatever */
+}
+
+/* Ensure proper colors for variables/keywords if using atom-one-dark */
+/* Actually, atom-one-dark sets text color too. changing background to transparent is safer. */
