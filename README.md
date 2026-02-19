@@ -1,6 +1,6 @@
 # Freedom AI Web
 
-An open-source, modern AI chat interface built with **React**, **Vite**, and **Tailwind CSS**. This application is a visual clone of **[claude.ai](https://claude.ai)**, meticulously replicating its premium style and fluid user experience.
+A high-fidelity **Claude AI** clone designed to replicate the premium look and feel of the official interface. The main goal of this project is to provide a seamless, fluid AI chat experience by leveraging an external proxy API to access powerful models freely.
 
 ## Backend & Model
 
