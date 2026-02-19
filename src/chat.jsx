@@ -24,7 +24,7 @@ function Chat({ isPinned, setIsPinned }) {
         <TopBar isPinned={isPinned} />
 
         <div className="flex-1 overflow-y-auto w-full relative scroll-smooth">
-          <div className="w-full max-w-3xl mx-auto px-4 pt-10 pb-32">
+          <div className="w-full max-w-3xl mx-auto px-4 pt-20 pb-32">
             <Chats />
           </div>
         </div>
