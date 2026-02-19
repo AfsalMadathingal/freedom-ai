@@ -2,23 +2,26 @@ import { useState, useEffect } from "react";
 import Chat from "./chat.jsx";
 import Home from "./home.jsx";
 import Guide from "./guide.jsx";
-import { RouterProvider, createHashRouter, Link } from "react-router-dom";
+import { RouterProvider, createHashRouter } from "react-router-dom";
 import { ChatProvider, useChat } from "./context/ChatContext.jsx";
 
 function ProxyErrorModal() {
   const { isProxyAvailable, isCheckingProxy, fetchModels, proxyPort, userName } = useChat();
-  const [isGuidePage, setIsGuidePage] = useState(window.location.hash.includes("/guide"));
+  const [currentHash, setCurrentHash] = useState(window.location.hash);
 
   // Update state when hash changes
   useEffect(() => {
     const handleHashChange = () => {
-      setIsGuidePage(window.location.hash.includes("/guide"));
+      setCurrentHash(window.location.hash);
     };
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  if (!userName || isCheckingProxy || isProxyAvailable || isGuidePage) return null;
+  const isGuidePage = currentHash.includes("/guide");
+
+  // Show if: Not currently checking, proxy is NOT available, and we are NOT on the guide page
+  if (isCheckingProxy || isProxyAvailable || isGuidePage) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
@@ -40,12 +43,12 @@ function ProxyErrorModal() {
             <i className="nf nf-md-refresh"></i> Retry Connection
           </button>
 
-          <Link
-            to="/guide"
+          <a
+            href="#/guide"
             className="block w-full py-3 text-sm text-text2 hover:text-text1 transition-colors"
           >
             How to setup the proxy?
-          </Link>
+          </a>
         </div>
       </div>
     </div>

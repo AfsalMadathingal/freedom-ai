@@ -34,7 +34,7 @@ export function ChatProvider({ children }) {
   const [availableModels, setAvailableModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState(() => localStorage.getItem('claude-model') || '');
   const [isProxyAvailable, setIsProxyAvailable] = useState(true);
-  const [isCheckingProxy, setIsCheckingProxy] = useState(true);
+  const [isCheckingProxy, setIsCheckingProxy] = useState(false);
 
   // Smooth Streaming Refs
   const targetTextRef = useRef('');
@@ -87,10 +87,10 @@ export function ChatProvider({ children }) {
   }, [baseUrl, proxyPort]);
 
   useEffect(() => {
-    if (userName && proxyPort) {
+    if (proxyPort) {
       fetchModels();
     }
-  }, [fetchModels, userName, proxyPort]);
+  }, [fetchModels, proxyPort]);
 
   useEffect(() => {
     localStorage.setItem('claude-username', userName);
