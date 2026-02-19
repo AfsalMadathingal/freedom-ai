@@ -11,7 +11,7 @@ import {
   LuPackage,
   LuCode,
   LuPenLine,
-  LuHelpCircle
+  LuCircleHelp
 } from "react-icons/lu";
 
 function SideBar({ isPinned, setIsPinned }) {
@@ -56,10 +56,10 @@ function SideBar({ isPinned, setIsPinned }) {
 
   return (
     <div
-      className={`fixed z-30 top-0 left-0 h-screen bg-[#2C2B28] border-r border-[#3A3933] flex flex-col transition-all duration-300 ${isPinned ? "w-72" : "w-16"}`}
+      className={`fixed z-30 top-0 left-0 h-screen bg-[#2D2C28] border-r border-[#3A3933] flex flex-col transition-all duration-300 ease-in-out ${isPinned ? "w-72" : "w-16"}`}
     >
       {/* Header Area */}
-      <div className={`flex items-center h-14 shrink-0 px-3 ${isPinned ? "justify-between" : "justify-center"}`}>
+      <div className={`flex items-center h-14 shrink-0 relative overflow-hidden ${isPinned ? "px-4 justify-between" : "justify-center"}`}>
         {isPinned && (
           <div className="text-text1 font-serif-logo text-xl font-bold tracking-tight truncate ml-1 animate-in fade-in duration-300">
             Freedom AI
@@ -78,27 +78,27 @@ function SideBar({ isPinned, setIsPinned }) {
       <div className="px-3 mt-2 flex flex-col space-y-2">
         <Link
           to="/"
-          className={`flex items-center ${isPinned ? "justify-between px-2 w-full" : "justify-center w-10"} bg-[#3A3933] hover:bg-[#45443F] text-text1 h-10 rounded-lg transition-all group`}
+          className={`flex items-center h-10 rounded-lg transition-all group overflow-hidden relative ${isPinned ? "w-full bg-[#3A3933]" : "w-10 bg-transparent"}`}
           title="New Chat"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-5 rounded-full bg-white text-black flex items-center justify-center shadow-sm shrink-0">
+          <div className="absolute left-0 w-10 h-10 flex items-center justify-center shrink-0">
+            <div className="w-5 h-5 rounded-full bg-white text-black flex items-center justify-center shadow-sm">
               <LuPlus size={12} />
             </div>
-            {isPinned && <span className="text-sm font-medium whitespace-nowrap overflow-hidden">New chat</span>}
           </div>
-          {isPinned && <LuPenLine size={16} className="text-text2 opacity-0 group-hover:opacity-100 transition-opacity" />}
+          {isPinned && <span className="ml-11 text-sm font-medium whitespace-nowrap animate-in fade-in duration-300">New chat</span>}
+          {isPinned && <LuPenLine size={16} className="absolute right-3 text-text2 opacity-0 group-hover:opacity-100 transition-opacity" />}
         </Link>
 
-        <div className={`relative flex items-center ${isPinned ? "w-full" : "justify-center w-10"}`}>
-          <div className={`${isPinned ? "absolute left-2.5" : ""} text-text2 h-10 flex items-center justify-center shrink-0 ${!isPinned && "w-10 hover:bg-[#3A3933] rounded-lg cursor-pointer"}`}>
+        <div className={`relative flex items-center h-10 rounded-lg transition-all group overflow-hidden ${isPinned ? "w-full" : "w-10"}`}>
+          <div className="absolute left-0 w-10 h-10 flex items-center justify-center text-text2 shrink-0 group-hover:text-text1 transition-colors cursor-pointer">
             <LuSearch size={18} />
           </div>
           {isPinned && (
             <input
               type="text"
               placeholder="Search"
-              className="w-full bg-transparent border border-transparent hover:border-[#3A3933] focus:bg-[#3A3933] focus:border-[#45443F] rounded-lg pl-10 pr-2 py-2 text-sm text-text1 outline-none transition-all placeholder-[#757575]"
+              className="w-full bg-[#3A3933] border border-transparent hover:border-[#45443F] focus:bg-[#3A3933] focus:border-[#45443F] rounded-lg pl-11 pr-2 py-2 text-sm text-text1 outline-none transition-all placeholder-[#757575]"
             />
           )}
         </div>
@@ -107,16 +107,18 @@ function SideBar({ isPinned, setIsPinned }) {
       {/* Nav Links */}
       <div className="mt-4 px-3 flex flex-col space-y-1">
         {navItems.map(item => {
-          const isActive = item.id === 'chats';
+          const isActive = item.id === 'chats' && location.pathname === '/';
           return (
             <Link
               to={item.to}
               key={item.id}
-              className={`flex items-center h-10 rounded-lg transition-all ${!isPinned ? "w-10 justify-center" : "px-2 gap-3"} ${isActive ? 'bg-[#1A1915] text-text1 font-medium' : 'text-text2 hover:text-text1 hover:bg-[#3A3933]'}`}
+              className={`flex items-center h-10 rounded-lg transition-all relative overflow-hidden ${isActive ? 'bg-[#1A1915] text-text1 font-medium' : 'text-text2 hover:text-text1 hover:bg-[#3A3933]'}`}
               title={!isPinned ? item.label : ""}
             >
-              <item.icon size={18} className="shrink-0" />
-              {isPinned && <span className="text-sm truncate">{item.label}</span>}
+              <div className="absolute left-0 w-10 h-10 flex items-center justify-center shrink-0">
+                <item.icon size={18} />
+              </div>
+              {isPinned && <span className="ml-11 text-sm truncate animate-in fade-in slide-in-from-left-2 duration-300">{item.label}</span>}
             </Link>
           );
         })}
@@ -133,7 +135,7 @@ function SideBar({ isPinned, setIsPinned }) {
                 <Link
                   key={conv.id}
                   to={`/chat/${conv.id}`}
-                  className={`block px-2 py-2 text-sm truncate rounded-lg transition-colors ${isCurrentChat ? 'bg-[#1A1915] text-text1' : 'text-text2 hover:bg-[#3A3933] hover:text-text1'}`}
+                  className={`block px-3 py-2 text-sm truncate rounded-lg transition-colors ${isCurrentChat ? 'bg-[#1A1915] text-text1' : 'text-text2 hover:bg-[#3A3933] hover:text-text1'}`}
                 >
                   {conv.title}
                 </Link>
@@ -147,23 +149,27 @@ function SideBar({ isPinned, setIsPinned }) {
       <div className="mt-auto border-t border-[#3A3933] p-3 flex flex-col space-y-1">
         <Link
           to="/guide"
-          className={`flex items-center rounded-lg text-text2 hover:text-text1 hover:bg-[#3A3933] transition-colors ${isPinned ? "h-10 px-2 gap-3" : "w-10 h-10 justify-center mx-auto"}`}
+          className={`flex items-center h-10 rounded-lg text-text2 hover:text-text1 hover:bg-[#3A3933] transition-all relative overflow-hidden ${isPinned ? "w-full" : "w-10 justify-center mx-auto"}`}
           title="Setup Guide"
         >
-          <LuHelpCircle size={18} className="shrink-0" />
-          {isPinned && <span className="text-sm">Setup Guide</span>}
+          <div className="absolute left-0 w-10 h-10 flex items-center justify-center shrink-0">
+            <LuCircleHelp size={18} />
+          </div>
+          {isPinned && <span className="ml-11 text-sm animate-in fade-in duration-300">Setup Guide</span>}
         </Link>
 
         <div
-          className={`flex items-center rounded-lg hover:bg-[#3A3933] cursor-pointer transition-colors ${isPinned ? "p-2 w-full gap-3" : "justify-center w-10 h-10 mx-auto"}`}
+          className={`flex items-center h-10 rounded-lg hover:bg-[#3A3933] cursor-pointer transition-all relative overflow-hidden ${isPinned ? "w-full" : "w-10 justify-center mx-auto"}`}
           onClick={handleNameClick}
           title={!isPinned ? displayName : ""}
         >
-          <div className="w-8 h-8 rounded-full bg-[#D97757] text-[#1A1915] flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
-            {initials}
+          <div className="absolute left-0 w-10 h-10 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[#D97757] text-[#1A1915] flex items-center justify-center text-xs font-bold shadow-sm">
+              {initials}
+            </div>
           </div>
           {isPinned && (
-            <div className="flex-1 min-w-0">
+            <div className="ml-11 flex-1 min-w-0 pr-2 animate-in fade-in duration-300">
               {isEditingName ? (
                 <input
                   ref={nameInputRef}
@@ -175,12 +181,12 @@ function SideBar({ isPinned, setIsPinned }) {
                     if (e.key === 'Escape') setIsEditingName(false);
                   }}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full bg-[#1A1915] border border-[#3A3933] text-text1 text-sm rounded px-1 outline-none"
+                  className="w-full bg-[#1A1915] border border-[#3A3933] text-text1 text-xs rounded px-1 outline-none"
                 />
               ) : (
                 <>
                   <div className="text-sm font-medium text-text1 truncate">{displayName}</div>
-                  <div className="text-xs text-text2">Freedom plan</div>
+                  <div className="text-[10px] text-text2 uppercase tracking-tighter">Freedom plan</div>
                 </>
               )}
             </div>
