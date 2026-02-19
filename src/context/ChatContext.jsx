@@ -60,7 +60,7 @@ export function ChatProvider({ children }) {
           id: m.id,
           name: name
         };
-      });
+      }).sort((a, b) => a.name.localeCompare(b.name));
 
       setAvailableModels(models);
       setIsProxyAvailable(true);
