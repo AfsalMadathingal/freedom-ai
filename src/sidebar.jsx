@@ -7,9 +7,6 @@ import {
   LuPlus,
   LuSearch,
   LuMessageSquare,
-  LuBriefcase,
-  LuPackage,
-  LuCode,
   LuPenLine,
   LuCircleHelp
 } from "react-icons/lu";
@@ -17,7 +14,7 @@ import {
 function SideBar({ isPinned, setIsPinned }) {
   const location = useLocation();
   const { conversations, userName, setUserName } = useChat();
-  const recentConversations = conversations.slice(0, 8);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState("");
   const nameInputRef = useRef(null);
@@ -47,31 +44,41 @@ function SideBar({ isPinned, setIsPinned }) {
     }
   }, [isEditingName]);
 
-  const navItems = [
-    { label: 'Chats', icon: LuMessageSquare, id: 'chats', to: '/' },
-    { label: 'Projects', icon: LuBriefcase, id: 'projects', to: '#' },
-    { label: 'Artifacts', icon: LuPackage, id: 'artifacts', to: '#' },
-    { label: 'Code', icon: LuCode, id: 'code', to: '#' }
-  ];
+  // Filter conversations based on search query
+  const filteredConversations = conversations.filter(conv =>
+    conv.title.toLowerCase().includes(searchQuery.toLowerCase())
+  ).slice(0, 15);
 
   return (
     <div
       className={`fixed z-30 top-0 left-0 h-screen bg-[#2D2C28] border-r border-[#3A3933] flex flex-col transition-all duration-300 ease-in-out ${isPinned ? "w-72" : "w-16"}`}
     >
       {/* Header Area */}
-      <div className={`flex items-center h-14 shrink-0 relative overflow-hidden ${isPinned ? "px-4 justify-between" : "justify-center"}`}>
-        {isPinned && (
-          <div className="text-text1 font-serif-logo text-xl font-bold tracking-tight truncate ml-1 animate-in fade-in duration-300">
-            Freedom AI
+      <div className={`flex items-center h-14 shrink-0 px-3 relative`}>
+        {isPinned ? (
+          <div className="flex items-center justify-between w-full">
+            <div className="text-text1 font-serif-logo text-xl font-bold tracking-tight truncate ml-1 animate-in fade-in duration-300">
+              Freedom AI
+            </div>
+            <button
+              onClick={toggleSidebar}
+              className="p-2 text-text2 hover:text-text1 rounded-md hover:bg-[#3A3933] transition-colors"
+              title="Close Sidebar"
+            >
+              <LuPanelLeftClose size={20} />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center w-full">
+            <button
+              onClick={toggleSidebar}
+              className="p-2 text-text2 hover:text-text1 rounded-md hover:bg-[#3A3933] transition-colors"
+              title="Open Sidebar"
+            >
+              <LuPanelLeftOpen size={20} />
+            </button>
           </div>
         )}
-        <button
-          onClick={toggleSidebar}
-          className="p-2 text-text2 hover:text-text1 rounded-md hover:bg-[#3A3933] transition-colors shrink-0"
-          title={isPinned ? "Close Sidebar" : "Open Sidebar"}
-        >
-          {isPinned ? <LuPanelLeftClose size={20} /> : <LuPanelLeftOpen size={20} />}
-        </button>
       </div>
 
       {/* Main Actions */}
@@ -97,50 +104,55 @@ function SideBar({ isPinned, setIsPinned }) {
           {isPinned && (
             <input
               type="text"
-              placeholder="Search"
+              placeholder="Search chats"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#3A3933] border border-transparent hover:border-[#45443F] focus:bg-[#3A3933] focus:border-[#45443F] rounded-lg pl-11 pr-2 py-2 text-sm text-text1 outline-none transition-all placeholder-[#757575]"
             />
           )}
         </div>
       </div>
 
-      {/* Nav Links */}
+      {/* Nav Links - Just Chats */}
       <div className="mt-4 px-3 flex flex-col space-y-1">
-        {navItems.map(item => {
-          const isActive = item.id === 'chats' && location.pathname === '/';
-          return (
-            <Link
-              to={item.to}
-              key={item.id}
-              className={`flex items-center h-10 rounded-lg transition-all relative overflow-hidden ${isActive ? 'bg-[#1A1915] text-text1 font-medium' : 'text-text2 hover:text-text1 hover:bg-[#3A3933]'}`}
-              title={!isPinned ? item.label : ""}
-            >
-              <div className="absolute left-0 w-10 h-10 flex items-center justify-center shrink-0">
-                <item.icon size={18} />
-              </div>
-              {isPinned && <span className="ml-11 text-sm truncate animate-in fade-in slide-in-from-left-2 duration-300">{item.label}</span>}
-            </Link>
-          );
-        })}
+        <Link
+          to="/"
+          className={`flex items-center h-10 rounded-lg transition-all relative overflow-hidden ${location.pathname === '/' ? 'bg-[#1A1915] text-text1 font-medium shadow-inner' : 'text-text2 hover:text-text1 hover:bg-[#3A3933]'}`}
+          title={!isPinned ? "Chats" : ""}
+        >
+          <div className="absolute left-0 w-10 h-10 flex items-center justify-center shrink-0">
+            <LuMessageSquare size={18} />
+          </div>
+          {isPinned && <span className="ml-11 text-sm truncate animate-in fade-in duration-300">Chats</span>}
+        </Link>
       </div>
 
       {/* Recents */}
       {isPinned && (
-        <div className="mt-6 flex-1 overflow-y-auto px-3 min-h-0 animate-in fade-in duration-500">
-          <h3 className="px-2 text-xs font-semibold text-text2 mb-2 uppercase tracking-wider">Recents</h3>
+        <div className="mt-6 flex-1 overflow-y-auto px-3 min-h-0 animate-in fade-in duration-500 border-t border-[#3A3933] pt-4">
+          <h3 className="px-2 text-xs font-semibold text-text2 mb-2 uppercase tracking-wider flex items-center justify-between">
+            <span>Recents</span>
+            {searchQuery && <span className="text-[10px] lowercase font-normal bg-[#3A3933] px-1.5 py-0.5 rounded text-text2">Filtering</span>}
+          </h3>
           <div className="space-y-0.5">
-            {recentConversations.map((conv) => {
-              const isCurrentChat = location.pathname === `/chat/${conv.id}`;
-              return (
-                <Link
-                  key={conv.id}
-                  to={`/chat/${conv.id}`}
-                  className={`block px-3 py-2 text-sm truncate rounded-lg transition-colors ${isCurrentChat ? 'bg-[#1A1915] text-text1' : 'text-text2 hover:bg-[#3A3933] hover:text-text1'}`}
-                >
-                  {conv.title}
-                </Link>
-              );
-            })}
+            {filteredConversations.length > 0 ? (
+              filteredConversations.map((conv) => {
+                const isCurrentChat = location.pathname === `/chat/${conv.id}`;
+                return (
+                  <Link
+                    key={conv.id}
+                    to={`/chat/${conv.id}`}
+                    className={`block px-3 py-2 text-sm truncate rounded-lg transition-colors ${isCurrentChat ? 'bg-[#1A1915] text-text1 shadow-inner' : 'text-text2 hover:bg-[#3A3933] hover:text-text1'}`}
+                  >
+                    {conv.title}
+                  </Link>
+                );
+              })
+            ) : (
+              <div className="px-3 py-4 text-xs text-text2 italic text-center">
+                No chats found
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -159,7 +171,7 @@ function SideBar({ isPinned, setIsPinned }) {
         </Link>
 
         <div
-          className={`flex items-center h-10 rounded-lg hover:bg-[#3A3933] cursor-pointer transition-all relative overflow-hidden ${isPinned ? "w-full" : "w-10 justify-center mx-auto"}`}
+          className={`flex items-center h-10 rounded-lg hover:bg-[#45443F] cursor-pointer transition-all relative overflow-hidden ${isPinned ? "w-full" : "w-10 justify-center mx-auto"}`}
           onClick={handleNameClick}
           title={!isPinned ? displayName : ""}
         >
