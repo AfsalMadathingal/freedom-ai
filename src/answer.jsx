@@ -186,7 +186,9 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy,
       )}
 
       {isStreaming && (value || thinking) && !error && (
-        <div className="mt-2 text-[#D97757] animate-pulse">●</div>
+        <div className="mt-2 text-[#D97757] flex items-center gap-1.5">
+           <FreedomLogo className="w-4 h-4 animate-pulse" />
+        </div>
       )}
 
       {!isStreaming && !displayError && value && (
