@@ -20,8 +20,9 @@ function ProxyErrorModal() {
 
   const isGuidePage = currentHash.includes("/guide");
 
-  // Show if: Not currently checking, proxy is NOT available, and we are NOT on the guide page
-  if (isCheckingProxy || isProxyAvailable || isGuidePage) return null;
+  // Show if: Not currently checking, proxy is NOT available, user has completed setup, and we are NOT on the guide page
+  // Don't show proxy modal if userName is empty — the welcome/setup prompt is showing instead
+  if (isCheckingProxy || isProxyAvailable || isGuidePage || !userName) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
