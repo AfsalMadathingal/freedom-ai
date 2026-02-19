@@ -112,14 +112,21 @@ export function ChatProvider({ children }) {
       streamingIntervalRef.current = setInterval(() => {
         if (currentTextRef.current.length < targetTextRef.current.length) {
           // Determine how many characters to add for smoothness
-          // If we are lagging far behind, catch up faster
+          // Ultra-fast catch-up logic for "fast smooth" feel
           const diff = targetTextRef.current.length - currentTextRef.current.length;
-          const jump = diff > 50 ? 5 : diff > 10 ? 2 : 1;
+          let jump = 1;
+          if (diff > 500) jump = 60;
+          else if (diff > 200) jump = 35;
+          else if (diff > 100) jump = 20;
+          else if (diff > 50) jump = 10;
+          else if (diff > 20) jump = 5;
+          else if (diff > 5) jump = 3;
+          else if (diff > 0) jump = 1;
 
           currentTextRef.current = targetTextRef.current.slice(0, currentTextRef.current.length + jump);
           setStreamingText(currentTextRef.current);
         }
-      }, 15);
+      }, 5); // Reduced to 5ms for near-instant refresh feeling
     } else {
       if (streamingIntervalRef.current) {
         clearInterval(streamingIntervalRef.current);
@@ -242,7 +249,7 @@ export function ChatProvider({ children }) {
 
         // Wait for smooth delivery to finish catch-up
         while (currentTextRef.current.length < targetTextRef.current.length) {
-          await new Promise(r => setTimeout(r, 20));
+          await new Promise(r => setTimeout(r, 10));
         }
 
         updateConversations((prev) =>

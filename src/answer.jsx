@@ -161,9 +161,6 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy,
           >
             {value}
           </ReactMarkdown>
-          {isStreaming && (
-            <span className="inline-block w-1.5 h-4 ml-1 bg-[#D97757] animate-pulse align-middle"></span>
-          )}
         </div>
       )}
 
