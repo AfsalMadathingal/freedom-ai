@@ -1,7 +1,5 @@
-const BASE_URL = 'http://localhost:8080';
-
-export async function sendMessage(messages, model, onChunk, signal) {
-  const response = await fetch(`${BASE_URL}/v1/messages`, {
+export async function sendMessage(messages, model, onChunk, signal, baseUrl = 'http://localhost:8080') {
+  const response = await fetch(`${baseUrl}/v1/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -84,8 +82,8 @@ export async function sendMessage(messages, model, onChunk, signal) {
   return { text: fullText, thinking: fullThinking };
 }
 
-export async function sendMessageNonStreaming(messages, model) {
-  const response = await fetch(`${BASE_URL}/v1/messages`, {
+export async function sendMessageNonStreaming(messages, model, baseUrl = 'http://localhost:8080') {
+  const response = await fetch(`${baseUrl}/v1/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

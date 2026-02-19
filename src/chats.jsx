@@ -6,9 +6,11 @@ import Answer from "./answer.jsx";
 
 function Chats() {
   const { id } = useParams();
-  const { activeConversation, streamingText, streamingThinking, isStreaming, error, retryLastMessage } = useChat();
+  const { activeConversation, streamingText, streamingThinking, isStreaming, error, retryLastMessage, selectedModel } = useChat();
   const bottomRef = useRef(null);
   const containerRef = useRef(null);
+
+  const showThinkingUI = selectedModel?.toLowerCase().includes('thinking');
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -45,6 +47,7 @@ function Chats() {
               thinking={msg.thinking}
               isError={msg.isError}
               onRetry={isLastAssistant ? () => retryLastMessage(id) : undefined}
+              showThinkingUI={showThinkingUI}
             />
           );
         }
@@ -58,6 +61,7 @@ function Chats() {
           error={error}
           isStreaming={true}
           isError={!!error}
+          showThinkingUI={showThinkingUI}
         />
       )}
 

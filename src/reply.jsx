@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useChat, AVAILABLE_MODELS } from "./context/ChatContext.jsx";
+import { useChat } from "./context/ChatContext.jsx";
 
 function Reply({ isPinned }) {
   const [text, setText] = useState("");
   const [showModels, setShowModels] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const { id } = useParams();
-  const { addUserMessage, sendChatMessage, isStreaming, stopStreaming, selectedModel, setSelectedModel } = useChat();
+  const { addUserMessage, sendChatMessage, isStreaming, stopStreaming, selectedModel, setSelectedModel, availableModels } = useChat();
   const textareaRef = useRef(null);
   const modelMenuRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -87,7 +87,7 @@ function Reply({ isPinned }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const currentModelName = AVAILABLE_MODELS.find(m => m.id === selectedModel)?.name || selectedModel;
+  const currentModelName = availableModels.find(m => m.id === selectedModel)?.name || selectedModel || "Select Model";
 
   return (
     <div className={`fixed bottom-0 right-0 z-20 flex flex-col items-center bg-transparent pointer-events-none transition-all duration-300 ${isPinned ? "left-72" : "left-16"}`}>
@@ -162,16 +162,20 @@ function Reply({ isPinned }) {
                 {showModels && (
                   <div className="absolute bottom-full mb-2 right-0 w-64 bg-[#2F2F2D] border border-[#3A3933] rounded-lg shadow-xl overflow-hidden py-1 z-30">
                     <div className="px-3 py-2 text-xs font-semibold text-[#757575] uppercase tracking-wider">Select Model</div>
-                    {AVAILABLE_MODELS.map((model) => (
-                      <button
-                        key={model.id}
-                        onClick={() => { setSelectedModel(model.id); setShowModels(false); }}
-                        className={`w-full text-left px-3 py-2 text-sm hover:bg-[#3A3933] flex items-center justify-between ${selectedModel === model.id ? 'text-[#D97757] font-medium' : 'text-text1'}`}
-                      >
-                        {model.name}
-                        {selectedModel === model.id && <i className="nf nf-fa-check text-xs"></i>}
-                      </button>
-                    ))}
+                    {availableModels.length > 0 ? (
+                      availableModels.map((model) => (
+                        <button
+                          key={model.id}
+                          onClick={() => { setSelectedModel(model.id); setShowModels(false); }}
+                          className={`w-full text-left px-3 py-2 text-sm hover:bg-[#3A3933] flex items-center justify-between ${selectedModel === model.id ? 'text-[#D97757] font-medium' : 'text-text1'}`}
+                        >
+                          {model.name}
+                          {selectedModel === model.id && <i className="nf nf-fa-check text-xs"></i>}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-xs text-[#757575] italic">No models available</div>
+                    )}
                   </div>
                 )}
               </div>

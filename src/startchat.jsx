@@ -2,14 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "./button.jsx";
 import Prompt from "./prompt.jsx";
-import { useChat, AVAILABLE_MODELS } from "./context/ChatContext.jsx";
+import { useChat } from "./context/ChatContext.jsx";
 
 function StartChat() {
   const [hideSuggestions, setHideSuggestions] = useState(false);
   const [text, setText] = useState("");
   const [showModels, setShowModels] = useState(false);
   const [attachments, setAttachments] = useState([]);
-  const { createConversation, sendChatMessage, selectedModel, setSelectedModel } = useChat();
+  const { createConversation, sendChatMessage, selectedModel, setSelectedModel, availableModels } = useChat();
   const navigate = useNavigate();
   const modelMenuRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -24,11 +24,6 @@ function StartChat() {
     if (!hasContent) return;
     const msgText = text.trim();
     const msgsToSend = [...attachments]; // Copy attachs
-
-    // We pass both text and attachments to createConversation
-    // But createConversation needs to handle that. 
-    // Wait, createConversation creates the ID and initial message.
-    // I need to update createConversation in ChatContext to accept attachments too.
 
     const id = createConversation(msgText, msgsToSend);
     setText("");
@@ -98,7 +93,7 @@ function StartChat() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const currentModelName = AVAILABLE_MODELS.find(m => m.id === selectedModel)?.name || selectedModel;
+  const currentModelName = availableModels.find(m => m.id === selectedModel)?.name || selectedModel || "Select Model";
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 mt-8">
@@ -166,16 +161,20 @@ function StartChat() {
               {showModels && (
                 <div className="absolute top-full mt-2 left-0 w-64 bg-[#2F2F2D] border border-[#3A3933] rounded-lg shadow-xl overflow-hidden py-1 z-30">
                   <div className="px-3 py-2 text-xs font-semibold text-[#757575] uppercase tracking-wider">Select Model</div>
-                  {AVAILABLE_MODELS.map((model) => (
-                    <button
-                      key={model.id}
-                      onClick={() => { setSelectedModel(model.id); setShowModels(false); }}
-                      className={`w-full text-left px-3 py-2 text-sm hover:bg-[#3A3933] flex items-center justify-between ${selectedModel === model.id ? 'text-[#D97757] font-medium' : 'text-text1'}`}
-                    >
-                      {model.name}
-                      {selectedModel === model.id && <i className="nf nf-fa-check text-xs"></i>}
-                    </button>
-                  ))}
+                  {availableModels.length > 0 ? (
+                    availableModels.map((model) => (
+                      <button
+                        key={model.id}
+                        onClick={() => { setSelectedModel(model.id); setShowModels(false); }}
+                        className={`w-full text-left px-3 py-2 text-sm hover:bg-[#3A3933] flex items-center justify-between ${selectedModel === model.id ? 'text-[#D97757] font-medium' : 'text-text1'}`}
+                      >
+                        {model.name}
+                        {selectedModel === model.id && <i className="nf nf-fa-check text-xs"></i>}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-3 py-2 text-xs text-[#757575] italic">No models available</div>
+                  )}
                 </div>
               )}
             </div>

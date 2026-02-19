@@ -3,21 +3,6 @@ import { sendMessage } from '../api.js';
 
 const ChatContext = createContext();
 
-export const AVAILABLE_MODELS = [
-  { id: 'claude-sonnet-4-5-thinking', name: 'Claude Sonnet 4.5 (Thinking)' },
-  { id: 'claude-opus-4-6-thinking', name: 'Claude Opus 4.6 (Thinking)' },
-  { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6 (Thinking)' },
-  { id: 'claude-sonnet-4-5', name: 'Claude Sonnet 4.5' },
-  { id: 'gemini-3-flash', name: 'Gemini 3 Flash' },
-  { id: 'gemini-3-pro-high', name: 'Gemini 3 Pro (High)' },
-  { id: 'gemini-3-pro-low', name: 'Gemini 3 Pro (Low)' },
-  { id: 'gemini-3-pro-image', name: 'Gemini 3 Pro Image' },
-  { id: 'gemini-2.5-flash-thinking', name: 'Gemini 2.5 Flash (Thinking)' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' },
-];
-
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
@@ -39,18 +24,70 @@ export function ChatProvider({ children }) {
   const [conversations, setConversations] = useState(loadConversations);
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [streamingText, setStreamingText] = useState('');
-  const [streamingThinking, setStreamingThinking] = useState(''); // New state for thinking
+  const [streamingThinking, setStreamingThinking] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState(null);
 
   // User Settings
   const [userName, setUserName] = useState(() => localStorage.getItem('claude-username') || '');
-  const [selectedModel, setSelectedModel] = useState(() => localStorage.getItem('claude-model') || 'claude-sonnet-4-5-thinking');
+  const [proxyPort, setProxyPort] = useState(() => localStorage.getItem('claude-proxy-port') || '8080');
+  const [availableModels, setAvailableModels] = useState([]);
+  const [selectedModel, setSelectedModel] = useState(() => localStorage.getItem('claude-model') || '');
+  const [isProxyAvailable, setIsProxyAvailable] = useState(true);
+  const [isCheckingProxy, setIsCheckingProxy] = useState(true);
 
-  const abortControllerRef = useRef(null);
-  const conversationsRef = useRef(conversations);
+  const baseUrl = `http://localhost:${proxyPort}`;
 
-  const activeConversation = conversations.find((c) => c.id === activeConversationId) || null;
+  const fetchModels = useCallback(async () => {
+    if (!proxyPort) return;
+    setIsCheckingProxy(true);
+    try {
+      const response = await fetch(`${baseUrl}/v1/models`);
+      if (!response.ok) throw new Error('Proxy not responding correctly');
+      const data = await response.json();
+
+      const models = data.data.map(m => {
+        let name = m.description || m.id;
+        const hasThinkingInId = m.id.toLowerCase().includes('thinking');
+
+        // If ID doesn't have 'thinking' but name does, clean it up
+        if (!hasThinkingInId && name.toLowerCase().includes('thinking')) {
+          name = name.replace(/\s*\(Thinking\)\s*/gi, '').trim();
+          name = name.replace(/\s+Thinking\s*/gi, '').trim();
+        }
+
+        return {
+          id: m.id,
+          name: name
+        };
+      });
+
+      setAvailableModels(models);
+      setIsProxyAvailable(true);
+
+      // Set default model if none selected or if selected is not in available
+      const savedModel = localStorage.getItem('claude-model');
+      if (models.length > 0) {
+        if (!savedModel || !models.find(m => m.id === savedModel)) {
+          setSelectedModel(models[0].id);
+        } else {
+          setSelectedModel(savedModel);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching models:', err);
+      setIsProxyAvailable(false);
+      setAvailableModels([]);
+    } finally {
+      setIsCheckingProxy(false);
+    }
+  }, [baseUrl, proxyPort]);
+
+  useEffect(() => {
+    if (userName && proxyPort) {
+      fetchModels();
+    }
+  }, [fetchModels, userName, proxyPort]);
 
   // Persist settings
   useEffect(() => {
@@ -58,8 +95,19 @@ export function ChatProvider({ children }) {
   }, [userName]);
 
   useEffect(() => {
-    localStorage.setItem('claude-model', selectedModel);
+    localStorage.setItem('claude-proxy-port', proxyPort);
+  }, [proxyPort]);
+
+  useEffect(() => {
+    if (selectedModel) {
+      localStorage.setItem('claude-model', selectedModel);
+    }
   }, [selectedModel]);
+
+  const abortControllerRef = useRef(null);
+  const conversationsRef = useRef(conversations);
+
+  const activeConversation = conversations.find((c) => c.id === activeConversationId) || null;
 
   const updateConversations = useCallback((updater) => {
     const prev = conversationsRef.current;
@@ -127,7 +175,7 @@ export function ChatProvider({ children }) {
       setError(null);
       setIsStreaming(true);
       setStreamingText('');
-      setStreamingThinking(''); // Reset thinking
+      setStreamingThinking('');
 
       const controller = new AbortController();
       abortControllerRef.current = controller;
@@ -147,14 +195,13 @@ export function ChatProvider({ children }) {
           messagesToSend,
           selectedModel,
           (update) => {
-            // Handle both text and thinking updates
             if (update.text !== undefined) setStreamingText(update.text);
             if (update.thinking !== undefined) setStreamingThinking(update.thinking);
           },
-          controller.signal
+          controller.signal,
+          baseUrl
         );
 
-        // The final result from sendMessage is expected to be an object { text, thinking }
         const { text: fullText, thinking: fullThinking } = finalResult || {};
 
         updateConversations((prev) =>
@@ -167,7 +214,7 @@ export function ChatProvider({ children }) {
                   {
                     role: 'assistant',
                     content: fullText || '',
-                    thinking: fullThinking || '', // Store thinking in message
+                    thinking: fullThinking || '',
                     timestamp: Date.now()
                   },
                 ],
@@ -209,7 +256,7 @@ export function ChatProvider({ children }) {
         setIsStreaming(false);
       }
     },
-    [updateConversations, selectedModel]
+    [updateConversations, selectedModel, baseUrl]
   );
 
   const stopStreaming = useCallback(() => {
@@ -269,8 +316,14 @@ export function ChatProvider({ children }) {
         error,
         userName,
         setUserName,
+        proxyPort,
+        setProxyPort,
+        availableModels,
         selectedModel,
         setSelectedModel,
+        isProxyAvailable,
+        isCheckingProxy,
+        fetchModels,
         createConversation,
         addUserMessage,
         sendChatMessage,

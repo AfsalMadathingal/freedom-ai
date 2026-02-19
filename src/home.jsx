@@ -16,21 +16,25 @@ function getGreeting() {
 
 function Home({ isPinned, setIsPinned }) {
   const [isLoaded, setIsLoaded] = useState(false);
-  const { userName, setUserName } = useChat();
+  const { userName, setUserName, proxyPort, setProxyPort } = useChat();
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [tempName, setTempName] = useState("");
+  const [tempPort, setTempPort] = useState("8080");
 
   useEffect(() => {
     setIsLoaded(true);
     if (!userName) {
       setShowNamePrompt(true);
+      setTempName(userName);
+      setTempPort(proxyPort || "8080");
     }
-  }, [userName]);
+  }, [userName, proxyPort]);
 
   const handleNameSubmit = (e) => {
     e.preventDefault();
     if (tempName.trim()) {
       setUserName(tempName.trim());
+      setProxyPort(tempPort.trim() || "8080");
       setShowNamePrompt(false);
     }
   };
@@ -55,25 +59,41 @@ function Home({ isPinned, setIsPinned }) {
         </div>
       </div>
 
-      {/* Name Prompt Modal */}
+      {/* Name & Port Prompt Modal */}
       {showNamePrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-[#2C2B28] p-8 rounded-2xl shadow-2xl border border-[#3A3933] w-full max-w-md animate-in fade-in zoom-in duration-300">
-            <h2 className="text-xl font-serif-logo font-bold text-text1 mb-4">Welcome to Freedom AI</h2>
-            <p className="text-text2 mb-6">Please enter your name to get started.</p>
-            <form onSubmit={handleNameSubmit}>
-              <input
-                autoFocus
-                type="text"
-                placeholder="Your name"
-                value={tempName}
-                onChange={(e) => setTempName(e.target.value)}
-                className="w-full bg-[#1A1915] border border-[#3A3933] text-text1 p-3 rounded-lg mb-4 outline-none focus:border-[#D97757]"
-              />
+            <h2 className="text-xl font-serif-logo font-bold text-text1 mb-2">Welcome to Freedom AI</h2>
+            <p className="text-text2 mb-6">Setup your profile and proxy to get started.</p>
+            <form onSubmit={handleNameSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-text2 mb-1 uppercase tracking-wider">Your Name</label>
+                <input
+                  autoFocus
+                  type="text"
+                  placeholder="Enter your name"
+                  value={tempName}
+                  onChange={(e) => setTempName(e.target.value)}
+                  className="w-full bg-[#1A1915] border border-[#3A3933] text-text1 p-3 rounded-lg outline-none focus:border-[#D97757]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-text2 mb-1 uppercase tracking-wider">Proxy Port</label>
+                <input
+                  type="text"
+                  placeholder="8080"
+                  value={tempPort}
+                  onChange={(e) => setTempPort(e.target.value)}
+                  className="w-full bg-[#1A1915] border border-[#3A3933] text-text1 p-3 rounded-lg outline-none focus:border-[#D97757]"
+                />
+                <p className="text-[10px] text-text2 mt-1 italic">Default is 8080. Ensure antigravity-proxy is running.</p>
+              </div>
+
               <button
                 type="submit"
                 disabled={!tempName.trim()}
-                className="w-full bg-[#D97757] text-white font-medium py-3 rounded-lg disabled:opacity-50 hover:bg-[#C56545] transition-colors"
+                className="w-full bg-[#D97757] text-white font-medium py-3 rounded-lg disabled:opacity-50 hover:bg-[#C56545] transition-colors mt-2"
               >
                 Continue
               </button>

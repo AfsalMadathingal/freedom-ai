@@ -85,7 +85,7 @@ const CodeBlock = ({ children, className, node, ...props }) => {
   );
 };
 
-function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy }) {
+function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy, showThinkingUI = true }) {
   const [copied, setCopied] = useState(false);
   const [loadingPhrase, setLoadingPhrase] = useState(LOADING_PHRASES[0]);
   const [isThinkingOpen, setIsThinkingOpen] = useState(false);
@@ -128,7 +128,7 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy 
     <div className={`relative px-0 py-2 text-text1 w-full max-w-3xl Md:max-w-[23rem]`}>
 
       {/* Thinking Block */}
-      {thinking && (
+      {showThinkingUI && thinking && (
         <div className="mb-4">
           <div
             onClick={() => setIsThinkingOpen(!isThinkingOpen)}
