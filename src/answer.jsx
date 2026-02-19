@@ -150,16 +150,20 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy,
 
       {/* Main Content */}
       {!isError && value && (
-        <div className="prose prose-invert max-w-none prose-pre:bg-[#1A1915] prose-pre:border prose-pre:border-[#2C2B28] prose-code:text-[#D97757] break-words text-[15px] leading-relaxed">
+        <div className="prose prose-invert max-w-none prose-pre:bg-[#1A1915] prose-pre:border prose-pre:border-[#2C2B28] prose-code:text-[#D97757] break-words text-[15px] leading-relaxed relative">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeHighlight]}
             components={{
-              pre: CodeBlock
+              pre: CodeBlock,
+              p: ({children}) => <p className="mb-4 last:mb-0 inline">{children}</p>
             }}
           >
             {value}
           </ReactMarkdown>
+          {isStreaming && (
+            <span className="inline-block w-1.5 h-4 ml-1 bg-[#D97757] animate-pulse align-middle"></span>
+          )}
         </div>
       )}
 

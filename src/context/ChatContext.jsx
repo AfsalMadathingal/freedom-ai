@@ -36,6 +36,11 @@ export function ChatProvider({ children }) {
   const [isProxyAvailable, setIsProxyAvailable] = useState(true);
   const [isCheckingProxy, setIsCheckingProxy] = useState(true);
 
+  // Smooth Streaming Refs
+  const targetTextRef = useRef('');
+  const currentTextRef = useRef('');
+  const streamingIntervalRef = useRef(null);
+
   const baseUrl = `http://localhost:${proxyPort}`;
 
   const fetchModels = useCallback(async () => {
@@ -50,7 +55,6 @@ export function ChatProvider({ children }) {
         let name = m.description || m.id;
         const hasThinkingInId = m.id.toLowerCase().includes('thinking');
 
-        // If ID doesn't have 'thinking' but name does, clean it up
         if (!hasThinkingInId && name.toLowerCase().includes('thinking')) {
           name = name.replace(/\s*\(Thinking\)\s*/gi, '').trim();
           name = name.replace(/\s+Thinking\s*/gi, '').trim();
@@ -65,7 +69,6 @@ export function ChatProvider({ children }) {
       setAvailableModels(models);
       setIsProxyAvailable(true);
 
-      // Set default model if none selected or if selected is not in available
       const savedModel = localStorage.getItem('claude-model');
       if (models.length > 0) {
         if (!savedModel || !models.find(m => m.id === savedModel)) {
@@ -89,7 +92,6 @@ export function ChatProvider({ children }) {
     }
   }, [fetchModels, userName, proxyPort]);
 
-  // Persist settings
   useEffect(() => {
     localStorage.setItem('claude-username', userName);
   }, [userName]);
@@ -103,6 +105,36 @@ export function ChatProvider({ children }) {
       localStorage.setItem('claude-model', selectedModel);
     }
   }, [selectedModel]);
+
+  // Smooth Delivery Effect
+  useEffect(() => {
+    if (isStreaming) {
+      streamingIntervalRef.current = setInterval(() => {
+        if (currentTextRef.current.length < targetTextRef.current.length) {
+          // Determine how many characters to add for smoothness
+          // If we are lagging far behind, catch up faster
+          const diff = targetTextRef.current.length - currentTextRef.current.length;
+          const jump = diff > 50 ? 5 : diff > 10 ? 2 : 1;
+
+          currentTextRef.current = targetTextRef.current.slice(0, currentTextRef.current.length + jump);
+          setStreamingText(currentTextRef.current);
+        }
+      }, 15);
+    } else {
+      if (streamingIntervalRef.current) {
+        clearInterval(streamingIntervalRef.current);
+        streamingIntervalRef.current = null;
+      }
+      // Ensure final text matches target exactly when done
+      if (currentTextRef.current !== targetTextRef.current) {
+        setStreamingText(targetTextRef.current);
+      }
+    }
+
+    return () => {
+      if (streamingIntervalRef.current) clearInterval(streamingIntervalRef.current);
+    };
+  }, [isStreaming]);
 
   const abortControllerRef = useRef(null);
   const conversationsRef = useRef(conversations);
@@ -171,11 +203,13 @@ export function ChatProvider({ children }) {
   );
 
   const sendChatMessage = useCallback(
-    async (conversationId, contentOverride = null) => {
+    async (conversationId) => {
       setError(null);
       setIsStreaming(true);
       setStreamingText('');
       setStreamingThinking('');
+      targetTextRef.current = '';
+      currentTextRef.current = '';
 
       const controller = new AbortController();
       abortControllerRef.current = controller;
@@ -195,7 +229,9 @@ export function ChatProvider({ children }) {
           messagesToSend,
           selectedModel,
           (update) => {
-            if (update.text !== undefined) setStreamingText(update.text);
+            if (update.text !== undefined) {
+              targetTextRef.current = update.text;
+            }
             if (update.thinking !== undefined) setStreamingThinking(update.thinking);
           },
           controller.signal,
@@ -203,6 +239,11 @@ export function ChatProvider({ children }) {
         );
 
         const { text: fullText, thinking: fullThinking } = finalResult || {};
+
+        // Wait for smooth delivery to finish catch-up
+        while (currentTextRef.current.length < targetTextRef.current.length) {
+          await new Promise(r => setTimeout(r, 20));
+        }
 
         updateConversations((prev) =>
           prev.map((c) =>
