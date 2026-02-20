@@ -38,9 +38,9 @@ body {
 }
 
 .prose pre {
-  background-color: #1a1a1a !important;
+  background-color: #272622 !important;
   border-radius: 0.75rem;
-  border: 1px solid #2F2F2B;
+  border: 1px solid #3A3933;
   padding: 1rem;
   margin: 1rem 0;
 }
@@ -48,9 +48,10 @@ body {
 .prose code {
   color: #E5E5E2 !important;
   font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-  font-size: 0.9em;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 2px 4px;
+  font-size: 0.92em;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.12);
+  padding: 2px 5px;
   border-radius: 4px;
 }
 

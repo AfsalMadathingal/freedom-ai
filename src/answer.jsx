@@ -38,7 +38,7 @@ const CodeBlock = ({ children, className, node, ...props }) => {
   // Note: react-markdown renders <pre><code>...</code></pre>. We are replacing <pre>.
   if (match) {
     return (
-      <div className="relative my-4 rounded-lg border border-[#2F2F2B] bg-[#1A1915] overflow-hidden group">
+      <div className="relative my-4 rounded-lg border border-[#3A3933] bg-[#272622] overflow-hidden group">
         <div className="flex items-center justify-between px-3 py-1.5 bg-[#2C2B28] border-b border-[#3A3933] select-none">
           <span className="text-xs text-[#A6A39A] font-medium lowercase font-sans">
             {match[1]}
@@ -64,7 +64,7 @@ const CodeBlock = ({ children, className, node, ...props }) => {
         <div className="overflow-x-auto custom-scrollbar">
           {/* Re-render the original code element (children) inside */}
           {/* We add !bg-transparent to override prose pre styles if they leak */}
-          <pre className="!my-0 !p-4 !bg-transparent !border-0 font-mono text-sm leading-relaxed" {...props}>
+          <pre className="!my-0 !p-4 !bg-transparent !border-0 font-mono text-sm font-medium leading-relaxed" {...props}>
             {children}
           </pre>
         </div>
@@ -74,7 +74,7 @@ const CodeBlock = ({ children, className, node, ...props }) => {
 
   // Fallback for non-highlighted blocks (terminal output, etc)
   return (
-    <div className="relative my-4 rounded-lg border border-[#2F2F2B] bg-[#1A1915] overflow-hidden">
+    <div className="relative my-4 rounded-lg border border-[#3A3933] bg-[#272622] overflow-hidden">
       {/* Optional header for generic code blocks? Maybe just pure content */}
       <div className="overflow-x-auto custom-scrollbar p-0">
         <pre className="!my-0 !p-4 !bg-transparent !border-0 font-mono text-sm" {...props}>
@@ -156,7 +156,7 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy,
             rehypePlugins={[rehypeHighlight]}
             components={{
               pre: CodeBlock,
-              p: ({children}) => <p className="mb-4 last:mb-0 inline">{children}</p>
+              p: ({ children }) => <p className="mb-4 last:mb-0 inline">{children}</p>
             }}
           >
             {value}
@@ -187,7 +187,7 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy,
 
       {isStreaming && (value || thinking) && !error && (
         <div className="mt-2 text-[#D97757] flex items-center gap-1.5">
-           <FreedomLogo className="w-4 h-4 animate-pulse" />
+          <FreedomLogo className="w-4 h-4 animate-pulse" />
         </div>
       )}
 
