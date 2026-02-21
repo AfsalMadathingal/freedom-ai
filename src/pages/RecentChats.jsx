@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Button from "./button.jsx";
-import ChatCard from "./chatcard.jsx";
-import { useChat } from "./context/ChatContext.jsx";
+import Button from "../components/common/Button.jsx";
+import ChatCard from "../components/chat/ChatCard.jsx";
+import { useChat } from "../context/ChatContext.jsx";
 
 function getElapsedTime(timestamp) {
   const diff = Date.now() - timestamp;

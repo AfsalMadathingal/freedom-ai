@@ -1,18 +1,31 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useChat } from "./context/ChatContext.jsx";
+import { useChat } from "../../context/ChatContext.jsx";
 
 function Reply({ isPinned }) {
   const [text, setText] = useState("");
   const [showModels, setShowModels] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const { id } = useParams();
-  const { addUserMessage, sendChatMessage, isStreaming, stopStreaming, selectedModel, setSelectedModel, availableModels } = useChat();
+  const {
+    addUserMessage,
+    sendChatMessage,
+    isStreaming,
+    stopStreaming,
+    selectedModel,
+    setSelectedModel,
+    availableModels,
+    setIsUserTyping
+  } = useChat();
   const textareaRef = useRef(null);
   const modelMenuRef = useRef(null);
   const fileInputRef = useRef(null);
 
   const hasContent = text.trim().length > 0 || attachments.length > 0;
+
+  useEffect(() => {
+    setIsUserTyping(hasContent);
+  }, [hasContent, setIsUserTyping]);
 
   useEffect(() => {
     if (textareaRef.current) {

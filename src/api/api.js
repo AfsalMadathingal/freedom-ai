@@ -1,4 +1,4 @@
-export async function sendMessage(messages, model, onChunk, signal, baseUrl = 'http://localhost:8080') {
+export async function sendMessage(messages, model, onChunk, signal, baseUrl = 'http://localhost:8080', system = '') {
   const response = await fetch(`${baseUrl}/v1/messages`, {
     method: 'POST',
     headers: {
@@ -10,6 +10,7 @@ export async function sendMessage(messages, model, onChunk, signal, baseUrl = 'h
       model: model,
       max_tokens: 16384,
       stream: true,
+      system: system,
       messages: messages.map((m) => ({
         role: m.role,
         content: m.content,

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import Button from "./button";
-import { useChat } from "./context/ChatContext.jsx";
+import Button from "../common/Button.jsx";
+import { useChat } from "../../context/ChatContext.jsx";
 
 function TopBar({ isPinned }) {
   const [dropDown, setDropDown] = useState(false);

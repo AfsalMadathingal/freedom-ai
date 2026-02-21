@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "./button.jsx";
-import Prompt from "./prompt.jsx";
-import { useChat } from "./context/ChatContext.jsx";
+import Button from "../common/Button.jsx";
+import Prompt from "./Prompt.jsx";
+import { useChat } from "../../context/ChatContext.jsx";
 
 function StartChat() {
   const [hideSuggestions, setHideSuggestions] = useState(false);
@@ -40,11 +40,29 @@ function StartChat() {
     }
   };
 
-  const handlePromptClick = (value) => {
-    const id = createConversation(value);
+  const handlePromptClick = (agent) => {
+    const id = createConversation('', [], agent.systemPrompt, agent.name);
     navigate(`/chat/${id}`);
-    sendChatMessage(id, value);
   };
+
+  const AGENT_SUGGESTIONS = [
+    {
+      name: "Grammar Correction",
+      systemPrompt: "You are a grammar correction assistant. Correct the grammar and spelling of the user's input, making it sound more natural and professional. Only provide the corrected text without any preamble or explanation."
+    },
+    {
+      name: "Polite Email",
+      systemPrompt: "You are an assistant that rewrites emails to be more polite and professional. Maintain the original meaning but improve the tone to be respectful and professional. Provide the rewritten email."
+    },
+    {
+      name: "Polite Message",
+      systemPrompt: "You are an assistant that rewrites short messages to be more polite and professional. Keep it concise and friendly while maintaining a professional tone."
+    },
+    {
+      name: "Customer Service Email",
+      systemPrompt: "You are a customer service specialist. Rewrite the user's request into a professional customer service email. If the input is in a different language, translate it to English while maintaining a professional CS tone."
+    }
+  ];
 
   const handleFileSelect = async (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -194,10 +212,13 @@ function StartChat() {
       {!hideSuggestions && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Prompt value="Extract insights from report" onClick={() => handlePromptClick("Extract insights from report")} />
-            <Prompt value="Generate excel formulas" onClick={() => handlePromptClick("Generate excel formulas")} />
-            <Prompt value="Generate interview questions" onClick={() => handlePromptClick("Generate interview questions")} />
-            <Prompt value="Explain complex code" onClick={() => handlePromptClick("Explain complex code")} />
+            {AGENT_SUGGESTIONS.map((agent, idx) => (
+              <Prompt
+                key={idx}
+                value={agent.name}
+                onClick={() => handlePromptClick(agent)}
+              />
+            ))}
           </div>
         </div>
       )}

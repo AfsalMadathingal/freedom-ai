@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/atom-one-dark.css";
-import FreedomLogo from "./components/FreedomLogo.jsx";
+import FreedomLogo from "../common/FreedomLogo.jsx";
 
 const LOADING_PHRASES = [
   "Conceptualizing...",

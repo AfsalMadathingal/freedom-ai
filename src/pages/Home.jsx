@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import StartChat from "./startchat.jsx";
-import SideBar from "./sidebar.jsx"; // Moved file failed so it's in src
-import { useChat } from "./context/ChatContext.jsx";
-import FreedomLogo from "./components/FreedomLogo.jsx";
+import StartChat from "../components/chat/StartChat.jsx";
+import SideBar from "../components/layout/SideBar.jsx"; // Moved file failed so it's in src
+import { useChat } from "../context/ChatContext.jsx";
+import FreedomLogo from "../components/common/FreedomLogo.jsx";
 
 // Import new CSS
-import "./index.css";
+import "../index.css";
 
 function getGreeting() {
   const hour = new Date().getHours();

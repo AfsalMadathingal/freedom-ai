@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import Chat from "./chat.jsx";
-import Home from "./home.jsx";
-import Guide from "./guide.jsx";
+import Chat from "./pages/ChatView.jsx";
+import Home from "./pages/Home.jsx";
+import Guide from "./pages/Guide.jsx";
+import Agents from "./pages/Agents.jsx";
 import { RouterProvider, createHashRouter } from "react-router-dom";
 import { ChatProvider, useChat } from "./context/ChatContext.jsx";
 
@@ -67,6 +68,10 @@ function AppContent() {
     {
       path: "/chat/:id",
       element: <Chat isPinned={isPinned} setIsPinned={setIsPinned} />,
+    },
+    {
+      path: "/agents",
+      element: <Agents isPinned={isPinned} setIsPinned={setIsPinned} />,
     },
     {
       path: "/guide",

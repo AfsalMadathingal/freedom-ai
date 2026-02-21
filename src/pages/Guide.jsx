@@ -1,5 +1,5 @@
-import SideBar from "./sidebar.jsx";
-import FreedomLogo from "./components/FreedomLogo.jsx";
+import SideBar from "../components/layout/SideBar.jsx";
+import FreedomLogo from "../components/common/FreedomLogo.jsx";
 
 function Guide({ isPinned, setIsPinned }) {
   return (

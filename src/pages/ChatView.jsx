@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import SideBar from "./sidebar.jsx";
-import TopBar from "./topbar.jsx";
-import Chats from "./chats.jsx";
-import Reply from "./reply.jsx";
-import { useChat } from "./context/ChatContext.jsx";
+import SideBar from "../components/layout/SideBar.jsx";
+import TopBar from "../components/layout/TopBar.jsx";
+import Chats from "../components/chat/Chats.jsx";
+import Reply from "../components/chat/Reply.jsx";
+import { useChat } from "../context/ChatContext.jsx";
 
 function Chat({ isPinned, setIsPinned }) {
   const { id } = useParams();

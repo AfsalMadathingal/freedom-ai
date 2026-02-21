@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
-import { sendMessage } from '../api.js';
+import { sendMessage, sendMessageNonStreaming } from '../api/api.js';
 
 const ChatContext = createContext();
 
@@ -35,6 +35,8 @@ export function ChatProvider({ children }) {
   const [selectedModel, setSelectedModel] = useState(() => localStorage.getItem('claude-model') || '');
   const [isProxyAvailable, setIsProxyAvailable] = useState(true);
   const [isCheckingProxy, setIsCheckingProxy] = useState(false);
+  const [activeAgent, setActiveAgent] = useState(null);
+  const [isUserTyping, setIsUserTyping] = useState(false);
 
   // Smooth Streaming Refs
   const targetTextRef = useRef('');
@@ -157,10 +159,10 @@ export function ChatProvider({ children }) {
   }, []);
 
   const createConversation = useCallback(
-    (firstMessage, attachments = []) => {
+    (firstMessage, attachments = [], systemPrompt = '', agentName = '') => {
       const id = generateId();
       const textContent = typeof firstMessage === 'string' ? firstMessage : '';
-      const title = textContent.slice(0, 50) + (textContent.length > 50 ? '...' : '');
+      const title = agentName ? `${agentName} Agent` : (textContent.slice(0, 50) + (textContent.length > 50 ? '...' : ''));
 
       let content = firstMessage;
       if (attachments && attachments.length > 0) {
@@ -170,10 +172,15 @@ export function ChatProvider({ children }) {
         ];
       }
 
+      const defaultSystemPrompt = "You are a helpful, extremely capable AI assistant. While you excel at coding and technical tasks, you are also phenomenal at giving general advice, answering non-technical questions, and discussing broad topics. Do not restrict yourself to coding; gladly and enthusiastically help the user with anything they need, including lifestyle, creative writing, health, or general life advice.";
+      const finalSystemPrompt = systemPrompt || defaultSystemPrompt;
+
       const conversation = {
         id,
         title,
-        messages: [{ role: 'user', content, timestamp: Date.now() }],
+        messages: firstMessage ? [{ role: 'user', content, timestamp: Date.now() }] : [],
+        systemPrompt: finalSystemPrompt,
+        agentName,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
@@ -242,7 +249,8 @@ export function ChatProvider({ children }) {
             if (update.thinking !== undefined) setStreamingThinking(update.thinking);
           },
           controller.signal,
-          baseUrl
+          baseUrl,
+          conv.systemPrompt || ''
         );
 
         const { text: fullText, thinking: fullThinking } = finalResult || {};
@@ -275,6 +283,13 @@ export function ChatProvider({ children }) {
         setStreamingText('');
         setStreamingThinking('');
         setIsStreaming(false);
+
+        // Auto-generate title after the first user-aide exchange
+        if (conv.messages.length === 1 && !conv.agentName) {
+          // Run background task to fetch title
+          generateTitleForConversation(conversationId, conv.messages[0].content, fullText);
+        }
+
       } catch (err) {
         if (err.name === 'AbortError') {
           setStreamingText('');
@@ -306,6 +321,28 @@ export function ChatProvider({ children }) {
     },
     [updateConversations, selectedModel, baseUrl]
   );
+
+  const generateTitleForConversation = async (conversationId, userMsg, aiMsg) => {
+    try {
+      const promptText = `Generate a very short, concise title (max 4-5 words) summarizing this chat. Return ONLY the title text, nothing else, no quotes, no conversational filler:\n\nUser: ${userMsg}\n\nAssistant: ${aiMsg}`;
+
+      const messagesToSend = [{ role: 'user', content: promptText }];
+      const titleResponse = await sendMessageNonStreaming(messagesToSend, selectedModel, baseUrl);
+
+      let newTitle = titleResponse.trim();
+      // Clean up common AI quirks
+      if (newTitle.startsWith('"') && newTitle.endsWith('"')) {
+        newTitle = newTitle.slice(1, -1);
+      }
+      if (newTitle.length > 50) newTitle = newTitle.slice(0, 47) + '...';
+
+      if (newTitle) {
+        renameConversation(conversationId, newTitle);
+      }
+    } catch (e) {
+      console.error('Failed to generate chat title:', e);
+    }
+  };
 
   const stopStreaming = useCallback(() => {
     if (abortControllerRef.current) {
@@ -379,6 +416,10 @@ export function ChatProvider({ children }) {
         deleteConversation,
         renameConversation,
         retryLastMessage,
+        activeAgent,
+        setActiveAgent,
+        isUserTyping,
+        setIsUserTyping
       }}
     >
       {children}
