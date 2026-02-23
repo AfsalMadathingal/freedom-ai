@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Zilla+Slab:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Zilla+Slab:wght@700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -43,6 +43,7 @@ body {
   border: 1px solid #3A3933;
   padding: 1rem;
   margin: 1rem 0;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
 }
 
 .prose code {
@@ -60,6 +61,7 @@ body {
   padding: 0;
   border-radius: 0;
   color: inherit;
+  font-family: inherit;
 }
 
 /* Markdown Tables - Added manually to ensure style consistency */

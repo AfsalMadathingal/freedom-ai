@@ -64,7 +64,7 @@ const CodeBlock = ({ children, className, node, ...props }) => {
         <div className="overflow-x-auto custom-scrollbar">
           {/* Re-render the original code element (children) inside */}
           {/* We add !bg-transparent to override prose pre styles if they leak */}
-          <pre className="!my-0 !p-4 !bg-transparent !border-0 font-mono text-sm font-medium leading-relaxed" {...props}>
+          <pre className="!my-0 !p-4 !bg-transparent !border-0 text-sm leading-relaxed" style={{ fontFamily: "'JetBrains Mono', 'Consolas', monospace" }} {...props}>
             {children}
           </pre>
         </div>
@@ -77,7 +77,7 @@ const CodeBlock = ({ children, className, node, ...props }) => {
     <div className="relative my-4 rounded-lg border border-[#3A3933] bg-[#272622] overflow-hidden">
       {/* Optional header for generic code blocks? Maybe just pure content */}
       <div className="overflow-x-auto custom-scrollbar p-0">
-        <pre className="!my-0 !p-4 !bg-transparent !border-0 font-mono text-sm" {...props}>
+        <pre className="!my-0 !p-4 !bg-transparent !border-0 text-sm leading-relaxed" style={{ fontFamily: "'JetBrains Mono', 'Consolas', monospace" }} {...props}>
           {children}
         </pre>
       </div>

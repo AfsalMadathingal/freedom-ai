@@ -16,7 +16,7 @@ function Chats() {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [activeConversation?.messages?.length, streamingText, streamingThinking, error]);
+  }, [activeConversation?.messages?.length, error]);
 
   if (!activeConversation) {
     return (
