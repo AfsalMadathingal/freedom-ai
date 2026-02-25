@@ -17,7 +17,7 @@ const LOADING_PHRASES = [
 ];
 
 // Custom Code Block Component with Copy
-const CodeBlock = ({ children, className, node, ...props }) => {
+export const CodeBlock = ({ children, className, node, ...props }) => {
   // Try to find the language from the child <code> element
   const childProps = children?.props || {};
   const childClassName = childProps.className || "";
@@ -156,7 +156,7 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy,
             rehypePlugins={[rehypeHighlight]}
             components={{
               pre: CodeBlock,
-              p: ({ children }) => <p className="mb-4 last:mb-0 inline">{children}</p>
+              p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>
             }}
           >
             {value}

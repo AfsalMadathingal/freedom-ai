@@ -234,10 +234,22 @@ export function ChatProvider({ children }) {
           throw new Error('Conversation not found or has no messages');
         }
 
-        const messagesToSend = conv.messages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        }));
+        const lastMessage = conv.messages[conv.messages.length - 1];
+
+        // If there's an agentName attached, we only send the latest user message to 
+        // prevent it from losing its persona due to old unrelated context filling its prompt.
+        let messagesToSend = [];
+        if (conv.agentName) {
+          messagesToSend = [{
+            role: lastMessage.role,
+            content: lastMessage.content,
+          }];
+        } else {
+          messagesToSend = conv.messages.map((m) => ({
+            role: m.role,
+            content: m.content,
+          }));
+        }
 
         const finalResult = await sendMessage(
           messagesToSend,

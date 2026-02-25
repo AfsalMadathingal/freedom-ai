@@ -37,44 +37,41 @@ export async function sendMessage(messages, model, onChunk, signal, baseUrl = 'h
 
     const chunk = decoder.decode(value, { stream: true });
     buffer += chunk;
+
     const lines = buffer.split('\n');
-    buffer = lines.pop(); // Keep the last partial line
+    buffer = lines.pop(); // Keep the last partial line in the buffer
 
-    for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        const dataStr = line.slice(6).trim();
-        if (dataStr === '[DONE]') continue;
-        try {
-          const data = JSON.parse(dataStr);
-          
-          // Handle Text Delta
-          if (data.type === 'content_block_delta' && data.delta?.type === 'text_delta') {
-             const text = data.delta.text;
-             fullText += text;
-             onChunk({ text: fullText, thinking: fullThinking });
-          }
-          
-          // Handle Thinking Delta
-          else if (data.type === 'content_block_delta' && data.delta?.type === 'thinking_delta') {
-             const thinking = data.delta.thinking;
-             fullThinking += thinking;
-             onChunk({ text: fullText, thinking: fullThinking });
-          }
-          
-          // Handle Message Delta (optional, for stops)
-          else if (data.type === 'message_delta') {
-             // Handle stop reason if needed
-          }
-          
-          // Handle Error
-          else if (data.type === 'error') {
-             const errorMsg = data.error?.message || 'Unknown error';
-             onChunk({ error: errorMsg });
-          }
-
-        } catch (e) {
-          // console.error('Error parsing SSE data:', e);
+    for (const msg of lines) {
+      const line = msg.trim();
+      if (!line.startsWith('data: ')) continue;
+      
+      const dataStr = line.slice(6).trim();
+      if (dataStr === '[DONE]' || dataStr === '') continue;
+      
+      try {
+        const data = JSON.parse(dataStr);
+        
+        // Handle Text Delta
+        if (data.type === 'content_block_delta' && data.delta?.type === 'text_delta') {
+           const text = data.delta.text;
+           fullText += text;
+           onChunk({ text: fullText, thinking: fullThinking });
         }
+        
+        // Handle Thinking Delta
+        else if (data.type === 'content_block_delta' && data.delta?.type === 'thinking_delta') {
+           const thinking = data.delta.thinking;
+           fullThinking += thinking;
+           onChunk({ text: fullText, thinking: fullThinking });
+        }
+        
+        // Handle Error
+        else if (data.type === 'error') {
+           const errorMsg = data.error?.message || 'Unknown error';
+           onChunk({ error: errorMsg });
+        }
+      } catch (e) {
+        // Silently ignore incomplete JSON blocks that might appear from broken lines
       }
     }
   }
