@@ -93,9 +93,9 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy,
   useEffect(() => {
     if (isStreaming && !value && !error) {
       const interval = setInterval(() => {
-        setLoadingPhrase(prev => {
-          const idx = LOADING_PHRASES.indexOf(prev);
-          return LOADING_PHRASES[(idx + 1) % LOADING_PHRASES.length];
+        setLoadingPhrase(() => {
+          const randomIndex = Math.floor(Math.random() * LOADING_PHRASES.length);
+          return LOADING_PHRASES[randomIndex];
         });
       }, 2000);
       return () => clearInterval(interval);
@@ -180,14 +180,14 @@ function Answer({ value, thinking, error, isStreaming, isError, onRetry, onCopy,
       {/* Loading State */}
       {isStreaming && !value && !thinking && !error && (
         <div className="flex items-center gap-2 text-[#A6A39A] text-sm mt-1">
-          <FreedomLogo className="w-5 h-5 animate-spin-slow" />
+          <FreedomLogo className="w-5 h-5" isThinking={true} />
           <span className="animate-pulse">{loadingPhrase}</span>
         </div>
       )}
 
       {isStreaming && (value || thinking) && !error && (
         <div className="mt-2 text-[#D97757] flex items-center gap-1.5">
-          <FreedomLogo className="w-4 h-4 animate-pulse" />
+          <FreedomLogo className="w-4 h-4" isThinking={true} />
         </div>
       )}
 
