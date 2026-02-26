@@ -1,4 +1,9 @@
+
+
 # Freedom AI Web
+
+<img width="1280" height="720" alt="Colorful Blue Illustrated Zoom Video Call Education Zoom Virtual Background (1)" src="https://github.com/user-attachments/assets/9e4c66d7-24ec-497c-9698-facaf19641ed" />
+
 
 A high-fidelity **Claude AI** clone designed to replicate the premium look and feel of the official interface. The main goal of this project is to provide a seamless, fluid AI chat experience by leveraging an external proxy API to access powerful models freely.
 
