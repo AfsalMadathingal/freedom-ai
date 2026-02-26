@@ -20,7 +20,7 @@ function Chat({ isPinned, setIsPinned }) {
     <div className="min-h-screen bg-[#21201C] text-text1 font-sans selection:bg-[#D97757] selection:text-white overflow-hidden">
       <SideBar isPinned={isPinned} setIsPinned={setIsPinned} />
 
-      <div className={`transition-all duration-300 ${isPinned ? "ml-72" : "ml-16"} h-screen flex flex-col`}>
+      <div className={`transition-all duration-300 w-full md:w-auto ${isPinned ? "md:ml-72" : "md:ml-16"} h-screen flex flex-col`}>
         <TopBar isPinned={isPinned} />
 
         <div className="flex-1 overflow-y-auto w-full relative scroll-smooth">

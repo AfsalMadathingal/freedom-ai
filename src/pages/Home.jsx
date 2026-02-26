@@ -43,7 +43,7 @@ function Home({ isPinned, setIsPinned }) {
     <div className="min-h-screen bg-[#21201C] text-text1 font-sans selection:bg-[#D97757] selection:text-white overflow-hidden relative">
       <SideBar isPinned={isPinned} setIsPinned={setIsPinned} />
 
-      <div className={`transition-all duration-300 ${isPinned ? "ml-72" : "ml-16"} h-screen overflow-y-auto`}>
+      <div className={`transition-all duration-300 w-full md:w-auto ${isPinned ? "md:ml-72" : "md:ml-16"} h-screen overflow-y-auto`}>
         <div className="flex flex-col items-center justify-center min-h-[80vh] w-full max-w-4xl mx-auto px-6 py-12">
 
           <div className={`transition-all duration-700 ease-out transform ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>

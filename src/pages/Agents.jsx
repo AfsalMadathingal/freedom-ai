@@ -227,8 +227,8 @@ function Agents({ isPinned, setIsPinned }) {
     <div className="min-h-screen bg-[#21201C] text-text1 font-sans overflow-hidden relative">
       <SideBar isPinned={isPinned} setIsPinned={setIsPinned} />
 
-      <div className={`transition-all duration-300 ${isPinned ? "ml-72" : "ml-16"} h-screen overflow-y-auto`}>
-        <div className="max-w-4xl mx-auto px-6 py-12 pb-32">
+      <div className={`transition-all duration-300 w-full md:w-auto ${isPinned ? "md:ml-72" : "md:ml-16"} h-screen overflow-y-auto`}>
+        <div className="max-w-4xl mx-auto px-6 py-12 pb-32 pt-16 md:pt-12">
           {!isCreatingAgent ? (
             <>
               <header className="mb-12 flex justify-between items-end">

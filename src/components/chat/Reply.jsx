@@ -103,7 +103,7 @@ function Reply({ isPinned }) {
   const currentModelName = availableModels.find(m => m.id === selectedModel)?.name || selectedModel || "Select Model";
 
   return (
-    <div className={`fixed bottom-0 right-0 z-20 flex flex-col items-center bg-transparent pointer-events-none transition-all duration-300 ${isPinned ? "left-72" : "left-16"}`}>
+    <div className={`fixed bottom-0 right-0 z-20 flex flex-col items-center bg-transparent pointer-events-none transition-all duration-300 ${isPinned ? "md:left-72 left-0" : "md:left-16 left-0"}`}>
 
       {/* Gradient Fade Overlay */}
       <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#21201C] via-[#21201C] to-transparent pointer-events-none -z-10"></div>

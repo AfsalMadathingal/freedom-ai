@@ -57,7 +57,7 @@ function TopBar({ isPinned }) {
   };
 
   return (
-    <div className={`fixed top-0 left-0 w-full h-14 bg-[#21201C] z-10 flex items-center justify-between px-4 border-b border-[#2C2B28] transition-all ${isPinned ? "pl-72" : "pl-20"}`}>
+    <div className={`fixed top-0 left-0 w-full h-14 bg-[#21201C] z-10 flex items-center justify-between px-4 border-b border-[#2C2B28] transition-all ${isPinned ? "md:pl-72 pl-16" : "md:pl-20 pl-16"}`}>
 
       {/* Title Area */}
       <div ref={ref} className="relative group cursor-pointer hover:bg-[#2C2B28] px-2 py-1 rounded-md transition-colors" onClick={() => setDropDown(!dropDown)}>

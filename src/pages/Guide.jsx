@@ -6,10 +6,10 @@ function Guide({ isPinned, setIsPinned }) {
     <div className="min-h-screen bg-[#21201C] text-text1 font-sans selection:bg-[#D97757] selection:text-white overflow-hidden relative">
       <SideBar isPinned={isPinned} setIsPinned={setIsPinned} />
 
-      <div className={`transition-all duration-300 ${isPinned ? "ml-72" : "ml-16"} h-screen overflow-y-auto`}>
-        <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className={`transition-all duration-300 w-full md:w-auto ${isPinned ? "md:ml-72" : "md:ml-16"} h-screen overflow-y-auto`}>
+        <div className="max-w-3xl mx-auto px-6 py-12 pt-16 md:pt-12">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 bg-[#D97757] rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-[#D97757] rounded-xl flex items-center justify-center shadow-lg shrink-0">
               <FreedomLogo className="w-7 h-7 text-white" />
             </div>
             <h1 className="text-3xl font-serif-logo font-bold">Setup Guide</h1>
@@ -29,13 +29,13 @@ function Guide({ isPinned, setIsPinned }) {
               <p className="text-text2 mb-4">
                 Clone and run the <strong>antigravity-claude-proxy</strong>:
               </p>
-              <div className="bg-[#1A1915] p-4 rounded-lg border border-[#3A3933] font-mono text-sm space-y-2">
-                <p className="text-text2"># Clone the repo</p>
-                <p>git clone https://github.com/badrisnarayanan/antigravity-claude-proxy</p>
-                <p className="text-text2"># Navigate and install</p>
-                <p>cd antigravity-claude-proxy && npm install</p>
-                <p className="text-text2"># Start the server</p>
-                <p>node server.js</p>
+              <div className="bg-[#1A1915] p-4 rounded-lg border border-[#3A3933] font-mono text-sm space-y-2 overflow-x-auto custom-scrollbar">
+                <p className="text-text2 whitespace-nowrap"># Clone the repo</p>
+                <p className="whitespace-nowrap">git clone https://github.com/badrisnarayanan/antigravity-claude-proxy</p>
+                <p className="text-text2 whitespace-nowrap"># Navigate and install</p>
+                <p className="whitespace-nowrap">cd antigravity-claude-proxy && npm install</p>
+                <p className="text-text2 whitespace-nowrap"># Start the server</p>
+                <p className="whitespace-nowrap">node server.js</p>
               </div>
               <p className="text-xs text-text2 mt-2 italic">
                 By default, the server runs on port <strong>8080</strong>.
